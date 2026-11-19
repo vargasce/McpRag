@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Kb.AppHost/Kb.AppHost.csproj" />
+    <Project Path="src/Kb.Core/Kb.Core.csproj" />
+    <Project Path="src/Kb.Infrastructure/Kb.Infrastructure.csproj" />
+    <Project Path="src/Kb.Ingest/Kb.Ingest.csproj" />
+    <Project Path="src/Kb.McpServer/Kb.McpServer.csproj" />
+    <Project Path="src/Kb.ServiceDefaults/Kb.ServiceDefaults.csproj" />
+  </Folder>
+</Solution>
