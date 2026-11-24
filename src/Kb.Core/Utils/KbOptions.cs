@@ -8,4 +8,5 @@ public sealed class KbOptions
   public int MaxCaracteresChunk { get; set; } = 1500;
   public string PrefijoDocumento { get; set; } = "search_document: ";
   public string PrefijoConsulta { get; set; } = "search_query: ";
+  public float ScoreMinimo { get; set; } = 0.40f;
 }

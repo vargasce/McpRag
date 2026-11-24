@@ -17,7 +17,7 @@ var ollama = builder
   .WithDataVolume()
   .WithLifetime(ContainerLifetime.Persistent);
 
-var embeddings = ollama.AddModel("embeddings", "nomic-embed-text");
+var embeddings = ollama.AddModel("embeddings", "bge-m3");
 
 var folder = Path.GetFullPath(Path.Combine("..", "..", "docs"));
 

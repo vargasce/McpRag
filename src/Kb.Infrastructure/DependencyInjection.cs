@@ -1,6 +1,7 @@
 using Kb.Core.Abstractions;
 using Kb.Core.Chunking;
 using Kb.Core.Ingestion;
+using Kb.Core.KnowledgeMcp;
 using Kb.Core.Utils;
 using Kb.Infrastructure.Persistence;
 using Kb.Infrastructure.VectorStore;
@@ -21,16 +22,39 @@ public static class DependencyInjection
     builder.AddSqlServerDbContext<KbDbContext>("kbdb");
     builder.AddQdrantClient("qdrant");
 
-    builder.Services.AddScoped<IDocumentRepository, EfDocumentoRepository>();
-    builder.Services.AddSingleton<IChunkingManager, ChunkingManager>();
-    builder.Services.AddSingleton<IDocumentIngest, DocumentIngest>();
     builder.Services.AddSingleton<IKnowledgeStore, KnowledgeStore>();
-    builder.Services.AddSingleton<MarkdownSourceFile>();
+    builder.Services.AddScoped<IDocumentRepository, EfDocumentoRepository>();
 
     builder
       .Services.AddOptions<KbOptions>()
       .Bind(builder.Configuration.GetSection(KbOptions.Seccion))
       .ValidateOnStart();
+
+    return builder;
+  }
+
+  ///<summary>
+  /// Add service by Ingest proyect.
+  ///</summary>
+  ///<param name="builder"> this IHostApplicationBuilder </param>
+  public static IHostApplicationBuilder AddKnowledgeIngest(this IHostApplicationBuilder builder)
+  {
+    builder.AddKnowledgeBase();
+    builder.Services.AddSingleton<IChunkingManager, ChunkingManager>();
+    builder.Services.AddSingleton<IDocumentIngest, DocumentIngest>();
+    builder.Services.AddSingleton<MarkdownSourceFile>();
+
+    return builder;
+  }
+
+  ///<summary>
+  /// Add service by MPC proyect.
+  ///</summary>
+  ///<param name="builder"> this IHostApplicationBuilder </param>
+  public static IHostApplicationBuilder AddKnowledgeMcp(this IHostApplicationBuilder builder)
+  {
+    builder.AddKnowledgeBase();
+    builder.Services.AddSingleton<IKnowledgeSearchAsync, KnowledgeMcpServices>();
 
     return builder;
   }

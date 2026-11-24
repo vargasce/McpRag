@@ -40,12 +40,12 @@ public sealed class KnowledgeStore(QdrantClient qdrant, IOptions<KbOptions> opti
   }
 
   public async Task UpdateChunksAsync(
-    Guid documentoId,
+    Core.Domain.Document document,
     IReadOnlyList<ChunkVector> chunks,
     CancellationToken ct = default
   )
   {
-    await DeleteByDocumentIdAsync(documentoId, ct);
+    await DeleteByDocumentIdAsync(document.DocumentId, ct);
 
     //Armar los puntos nuevos
     var points = chunks
@@ -55,9 +55,9 @@ public sealed class KnowledgeStore(QdrantClient qdrant, IOptions<KbOptions> opti
         Vectors = c.Vector.ToArray(),
         Payload =
         {
-          ["documentoId"] = documentoId.ToString(),
-          ["titulo"] = c.Chunking.File,
-          ["categoria"] = c.Chunking.File,
+          ["documentoId"] = document.DocumentId.ToString(),
+          ["titulo"] = document.Title,
+          ["categoria"] = document.Category,
           ["seccion"] = c.Chunking.Section,
           ["indice"] = c.Chunking.Index,
           ["texto"] = c.Chunking.Text,
@@ -68,21 +68,50 @@ public sealed class KnowledgeStore(QdrantClient qdrant, IOptions<KbOptions> opti
     await qdrant.UpsertAsync(_collection, points, cancellationToken: ct);
   }
 
-  public Task<IReadOnlyList<DocumentDto>> BuscarAsync(
+  public async Task<IReadOnlyList<DocumentResponseDto>> SearchAsync(
     ReadOnlyMemory<float> vector,
     int top,
     string? categoria,
     CancellationToken ct = default
   )
   {
-    throw new Exception();
+    if (!await qdrant.CollectionExistsAsync(_collection, ct))
+      return [];
+
+    Filter? filter = string.IsNullOrEmpty(categoria)
+      ? null
+      : new Filter { Must = { MatchKeyword("category", categoria.Trim().ToLower()) } };
+
+    var points = await qdrant.QueryAsync(
+      _collection,
+      query: vector.ToArray(),
+      filter: filter,
+      limit: (ulong)top,
+      scoreThreshold: options.Value.ScoreMinimo,
+      payloadSelector: true,
+      cancellationToken: ct
+    );
+
+    return points
+      .Select(p => new DocumentResponseDto(
+        DocumentId: Guid.Parse(GetString(p.Payload, "documentoId")),
+        Title: GetString(p.Payload, "titulo"),
+        Section: GetString(p.Payload, "seccion"),
+        Category: GetString(p.Payload, "categoria"),
+        Text: GetString(p.Payload, "texto"),
+        Score: Math.Round(p.Score, 3)
+      ))
+      .ToList();
   }
+
+  private static string GetString(IDictionary<string, Value> payload, string key) =>
+    payload.TryGetValue(key, out var value) ? value.StringValue : "";
 
   private async Task DeleteByDocumentIdAsync(Guid documentId, CancellationToken ct = default)
   {
     await qdrant.DeleteAsync(
       _collection,
-      new Filter { Must = { MatchKeyword("documentoId", documentId.ToString()) } },
+      new Filter { Must = { MatchKeyword("documentId", documentId.ToString()) } },
       cancellationToken: ct
     );
   }

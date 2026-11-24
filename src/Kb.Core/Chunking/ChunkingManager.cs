@@ -77,7 +77,7 @@ public sealed class ChunkingManager(
       return;
 
     await _knowledgeStore.ValidateColectionAsync(chunksVectors[0].Vector.Length, ct);
-    await _knowledgeStore.UpdateChunksAsync(document.DocumentId, chunksVectors, ct);
+    await _knowledgeStore.UpdateChunksAsync(document, chunksVectors, ct);
   }
 
   public async Task<List<ChunkVector>> GetChunkVectors(
