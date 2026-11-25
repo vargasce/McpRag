@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "kb-finvoi": {
+    "kb-base": {
       "type": "http",
       "url": "http://localhost:5100/mcp"
     }
