@@ -54,8 +54,7 @@ public static class DependencyInjection
   public static IHostApplicationBuilder AddKnowledgeMcp(this IHostApplicationBuilder builder)
   {
     builder.AddKnowledgeBase();
-    builder.Services.AddSingleton<IKnowledgeSearchAsync, KnowledgeMcpServices>();
-
+    builder.Services.AddScoped<IKnowledgeSearchAsync, KnowledgeMcpServices>();
     return builder;
   }
 
