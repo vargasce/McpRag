@@ -68,7 +68,7 @@ public sealed class KnowledgeStore(QdrantClient qdrant, IOptions<KbOptions> opti
     await qdrant.UpsertAsync(_collection, points, cancellationToken: ct);
   }
 
-  public async Task<IReadOnlyList<DocumentResponseDto>> SearchAsync(
+  public async Task<IReadOnlyList<DocumentResponseMcpDto>> SearchAsync(
     ReadOnlyMemory<float> vector,
     int top,
     string? categoria,
@@ -93,7 +93,7 @@ public sealed class KnowledgeStore(QdrantClient qdrant, IOptions<KbOptions> opti
     );
 
     return points
-      .Select(p => new DocumentResponseDto(
+      .Select(p => new DocumentResponseMcpDto(
         DocumentId: Guid.Parse(GetString(p.Payload, "documentoId")),
         Title: GetString(p.Payload, "titulo"),
         Section: GetString(p.Payload, "seccion"),

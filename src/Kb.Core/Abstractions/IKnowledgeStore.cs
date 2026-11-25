@@ -13,7 +13,7 @@ public interface IKnowledgeStore
     CancellationToken ct = default
   );
 
-  Task<IReadOnlyList<DocumentResponseDto>> SearchAsync(
+  Task<IReadOnlyList<DocumentResponseMcpDto>> SearchAsync(
     ReadOnlyMemory<float> vector,
     int top,
     string? categoria,

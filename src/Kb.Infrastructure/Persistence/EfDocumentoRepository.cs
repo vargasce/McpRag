@@ -1,6 +1,7 @@
 using Kb.Core.Abstractions;
 using Kb.Core.Domain;
 using Kb.Core.Dtos;
+using Kb.Infrastructure.Persistence.Projections;
 using Microsoft.EntityFrameworkCore;
 
 namespace Kb.Infrastructure.Persistence;
@@ -17,20 +18,22 @@ internal sealed class EfDocumentoRepository(KbDbContext db) : IDocumentRepositor
     return document;
   }
 
+  public Task<DocumentDetailMcpDto?> GetDocumentByIdAsync(Guid id, CancellationToken ct = default)
+  {
+    return db
+      .Documents.AsNoTracking()
+      .Where(d => d.DocumentId == id)
+      .ProjectToDocumentDetailMcp()
+      .FirstOrDefaultAsync(ct);
+  }
+
   public async Task<IReadOnlyList<DocumentDto>> ListAsync(CancellationToken ct = default)
   {
     var listDocuments = await db
       .Documents.AsNoTracking()
       .OrderBy(x => x.CreateDate)
       .ThenBy(x => x.Title)
-      .Select(d => new DocumentDto(
-        d.RelativePath,
-        d.Title,
-        d.Category,
-        d.StatusDocument.ToString(),
-        d.CountChunks,
-        d.LastDateProccess
-      ))
+      .ProjectToDocumentDto()
       .ToListAsync(ct);
 
     return listDocuments;

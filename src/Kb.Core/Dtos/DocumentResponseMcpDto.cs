@@ -1,6 +1,6 @@
 namespace Kb.Core.Dtos;
 
-public sealed record DocumentResponseDto(
+public sealed record DocumentResponseMcpDto(
   Guid DocumentId,
   string Title,
   string Section,

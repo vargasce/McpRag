@@ -1,6 +1,7 @@
 namespace Kb.Core.Dtos;
 
 public sealed record DocumentDto(
+  Guid DocumentId,
   string RelativePath,
   string Title,
   string Category,
