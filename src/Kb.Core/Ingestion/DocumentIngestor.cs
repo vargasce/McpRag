@@ -55,7 +55,7 @@ public sealed class DocumentIngest(
 
         await _chunking.SaveChunckQdrant(chunkVectors, document, ct);
 
-        document.MarkComplete(hash, entry.RelativePath, entry.Content, chunks.Count);
+        document.MarkComplete(hash, entry.Title, entry.Content, chunks.Count);
       }
       catch (Exception ex) when (ex is not OperationCanceledException)
       {

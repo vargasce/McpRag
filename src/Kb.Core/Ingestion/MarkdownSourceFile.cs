@@ -41,8 +41,15 @@ public sealed class MarkdownSourceFile(
       var ruta = Path.GetRelativePath(folder, path).Replace('\\', '/');
       var category = ruta.Contains('/') ? ruta.Split('/')[0] : "general";
       var content = await File.ReadAllTextAsync(path, ct);
+      var title =
+        content
+          .Replace("\r\n", "\n")
+          .Split('\n')
+          .FirstOrDefault(l => l.StartsWith("# "))
+          ?[2..].Trim()
+        ?? "No definido";
 
-      yield return new DocumentReadDto(ruta, category, content);
+      yield return new DocumentReadDto(ruta, category, content, title);
     }
   }
 }

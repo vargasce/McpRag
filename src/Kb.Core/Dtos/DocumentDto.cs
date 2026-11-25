@@ -10,4 +10,9 @@ public sealed record DocumentDto(
   DateTimeOffset? LastDateProccess
 );
 
-public sealed record DocumentReadDto(string RelativePath, string Category, string Content);
+public sealed record DocumentReadDto(
+  string RelativePath,
+  string Category,
+  string Content,
+  string Title
+);
