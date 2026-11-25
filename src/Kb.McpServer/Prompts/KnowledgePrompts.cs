@@ -14,7 +14,7 @@ public sealed class KnowledgePrompts
     [Description("La consulta a responder")] string pregunta
   ) =>
     $"""
-      Respondé la siguiente consulta sobre la plataforma Finvoi.
+      Respondé la siguiente consulta sobre la plataforma.
 
       Cómo trabajar:
       1. Buscá con la tool busqueda-de-conocimiento antes de responder. Si la consulta
