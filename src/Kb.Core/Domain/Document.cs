@@ -17,13 +17,19 @@ public sealed class Document
 
   public Document() { }
 
-  public static Document CreateDocument(string relativePath, string category) =>
+  public static Document CreateDocument(
+    string relativePath,
+    string category,
+    string title,
+    string content
+  ) =>
     new()
     {
+      Content = content,
       DocumentId = Guid.NewGuid(),
       RelativePath = relativePath,
       Category = category,
-      Title = Path.GetFileNameWithoutExtension(relativePath),
+      Title = title,
       StatusDocument = StatusDocumentEnum.Pending,
       CreateDate = DateTimeOffset.Now,
     };
@@ -38,10 +44,9 @@ public sealed class Document
     LastError = null;
   }
 
-  public void MarkComplete(string hash, string title, string content, int countChunks)
+  public void MarkComplete(string hash, string? content, int countChunks)
   {
     Hash = hash;
-    Title = title;
     Content = content;
     CountChunks = countChunks;
     StatusDocument = StatusDocumentEnum.Complete;
@@ -53,5 +58,12 @@ public sealed class Document
     LastError = error.Length > 2000 ? error[..2000] : error;
     StatusDocument = StatusDocumentEnum.Error;
     LastDateProccess = DateTimeOffset.Now;
+  }
+
+  public void UpdateContent(string content, string category, string title)
+  {
+    Content = content;
+    Category = category;
+    Title = title;
   }
 }

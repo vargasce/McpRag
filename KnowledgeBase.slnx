@@ -4,6 +4,7 @@
     <Project Path="src/Kb.Core/Kb.Core.csproj" />
     <Project Path="src/Kb.Infrastructure/Kb.Infrastructure.csproj" />
     <Project Path="src/Kb.Ingest/Kb.Ingest.csproj" />
+    <Project Path="src/Kb.IngestionApi/Kb.IngestionApi.csproj" />
     <Project Path="src/Kb.McpServer/Kb.McpServer.csproj" />
     <Project Path="src/Kb.ServiceDefaults/Kb.ServiceDefaults.csproj" />
   </Folder>

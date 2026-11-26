@@ -1,14 +1,11 @@
 using Kb.Core.Abstractions;
 using Kb.Core.Domain;
-using Kb.Core.Dtos;
-using Kb.Core.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Kb.Core.Ingestion;
 
 public sealed class DocumentIngest(
-  IChunkingManager _chunking,
   MarkdownSourceFile _source,
   IServiceScopeFactory _factory,
   ILogger<DocumentIngest> _logger
@@ -22,48 +19,29 @@ public sealed class DocumentIngest(
     {
       await using var scope = _factory.CreateAsyncScope();
       var repo = scope.ServiceProvider.GetRequiredService<IDocumentRepository>();
-
-      var hash = EncodingUtil.EncodeSha256(entry.Content);
+      var documentProcesor = scope.ServiceProvider.GetRequiredService<IDocumentProcessor>();
 
       var document = await repo.GetByPathAsync(entry.RelativePath, ct);
 
       if (document is null)
       {
-        document = Document.CreateDocument(entry.RelativePath, entry.Category);
+        document = Document.CreateDocument(
+          entry.RelativePath,
+          entry.Category,
+          entry.Title,
+          entry.Content
+        );
+
         repo.AddDocument(document);
       }
-      else if (!document.RequireProccess(hash))
+      else
       {
-        _logger.SinCambios(entry.RelativePath);
-        continue;
-      }
-
-      document.MarkProccess();
-      await repo.SaveChangesAsync(ct);
-
-      try
-      {
-        var chunks = _chunking
-          .FragmentMarkDown(entry.Content)
-          .Select(
-            (parte, i) =>
-              new Chunk(i, Path.GetFileName(entry.RelativePath), parte.section, parte.text)
-          )
-          .ToList();
-
-        var chunkVectors = await _chunking.GetChunkVectors(chunks, document, ct);
-
-        await _chunking.SaveChunckQdrant(chunkVectors, document, ct);
-
-        document.MarkComplete(hash, entry.Title, entry.Content, chunks.Count);
-      }
-      catch (Exception ex) when (ex is not OperationCanceledException)
-      {
-        _logger.ErrorProcesando(ex, entry.RelativePath);
-        document.MarkError(ex.Message);
+        document.UpdateContent(entry.Content, entry.Category, entry.Title);
       }
 
       await repo.SaveChangesAsync(ct);
+
+      await documentProcesor.ProcessAsync(document.DocumentId, ct);
     }
 
     _logger.LogInformation("Finish ingest.");

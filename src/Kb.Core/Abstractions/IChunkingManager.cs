@@ -5,7 +5,7 @@ namespace Kb.Core.Abstractions;
 
 public interface IChunkingManager
 {
-  List<(string section, string text)> FragmentMarkDown(string content);
+  List<(string section, string text)> FragmentMarkDown(string? content);
 
   Task<IReadOnlyList<ReadOnlyMemory<float>>> GetEmbeddings(
     List<string> texts,

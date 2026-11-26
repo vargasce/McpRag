@@ -42,6 +42,7 @@ public static class DependencyInjection
     builder.AddKnowledgeBase();
     builder.Services.AddSingleton<IChunkingManager, ChunkingManager>();
     builder.Services.AddSingleton<IDocumentIngest, DocumentIngest>();
+    builder.Services.AddScoped<IDocumentProcessor, DocumentProcessor>();
     builder.Services.AddSingleton<MarkdownSourceFile>();
 
     return builder;

@@ -18,6 +18,14 @@ internal sealed class EfDocumentoRepository(KbDbContext db) : IDocumentRepositor
     return document;
   }
 
+  public Task<Document?> GetDocumentDomainAsync(Guid documentId, CancellationToken ct = default)
+  {
+    return db
+      .Documents.AsNoTracking()
+      .Where(x => x.DocumentId == documentId)
+      .FirstOrDefaultAsync(ct);
+  }
+
   public Task<DocumentDetailMcpDto?> GetDocumentByIdAsync(Guid id, CancellationToken ct = default)
   {
     return db

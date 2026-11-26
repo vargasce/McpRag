@@ -14,8 +14,11 @@ public sealed class ChunkingManager(
   IOptions<KbOptions> options
 ) : IChunkingManager
 {
-  public List<(string section, string text)> FragmentMarkDown(string content)
+  public List<(string section, string text)> FragmentMarkDown(string? content)
   {
+    if (content is null)
+      throw new Exception("Error, content is null");
+
     var lineas = content.Split("\n");
     var titulo = lineas.FirstOrDefault(l => l.StartsWith("# "))?[2..].Trim();
     var section = titulo;

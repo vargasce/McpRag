@@ -3,9 +3,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Kb.McpServer\Kb.McpServer.csproj" />
     <ProjectReference Include="..\Kb.Ingest\Kb.Ingest.csproj" />
+    <ProjectReference Include="..\Kb.IngestionApi\Kb.IngestionApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.Azure.ServiceBus" Version="13.6.5" />
     <PackageReference Include="Aspire.Hosting.Qdrant" Version="13.6.5" />
     <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.6.5" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.Ollama" Version="13.6.1" />
